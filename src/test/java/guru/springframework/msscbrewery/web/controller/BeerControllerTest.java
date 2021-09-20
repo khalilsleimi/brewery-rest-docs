@@ -17,6 +17,7 @@ import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.StringUtils;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
@@ -74,19 +75,20 @@ public class BeerControllerTest {
 
         ConstrainedFields fields = new ConstrainedFields(BeerDto.class);
 
-        mockMvc.perform(get("/api/v1/beer/" + validBeer.getId().toString()).accept(MediaType.APPLICATION_JSON))
+        // I just changed it because of courses's recommendation. I don't understand why. It used to work fine, and now it also works fine
+        mockMvc.perform(get("/api/v1/beer/{beerId}", validBeer.getId().toString()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.id", is(validBeer.getId().toString())))
                 .andExpect(jsonPath("$.beerName", is("Beer1")))
                 .andDo(document("v1/beer-get",
                         responseFields(
-                                fields.withPath("id").description("Id of Beer").ignored(),
-                                fields.withPath("createdDate").description("Date Created").ignored(),
-                                fields.withPath("lastUpdatedDate").description("Date Updated").ignored(),
+                                fields.withPath("id").description("Id of Beer").type(UUID.class),
+                                fields.withPath("createdDate").description("Date Created").type(OffsetDateTime.class),
+                                fields.withPath("lastUpdatedDate").description("Date Updated").type(OffsetDateTime.class),
                                 fields.withPath("beerName").description("Beer Name"),
                                 fields.withPath("beerStyle").description("Beer Style"),
-                                fields.withPath("upc").description("UPC of Beer").attributes()
+                                fields.withPath("upc").description("UPC of Beer")
                         )
                 ));
     }
@@ -109,9 +111,9 @@ public class BeerControllerTest {
                 .andExpect(status().isCreated())
                 .andDo(document("v1/beer-post",
                         requestFields(
-                                fields.withPath("id").description("Id of Beer").ignored(),
-                                fields.withPath("createdDate").description("Date Created").ignored(),
-                                fields.withPath("lastUpdatedDate").description("Date Updated").ignored(),
+                                fields.withPath("id").description("Id of Beer").type(UUID.class),
+                                fields.withPath("createdDate").description("Date Created").type(OffsetDateTime.class),
+                                fields.withPath("lastUpdatedDate").description("Date Updated").type(OffsetDateTime.class),
                                 fields.withPath("beerName").description("Beer Name"),
                                 fields.withPath("beerStyle").description("Beer Style"),
                                 fields.withPath("upc").description("UPC of Beer").attributes()
@@ -136,9 +138,9 @@ public class BeerControllerTest {
                 .andExpect(status().isNoContent())
                 .andDo(document("v1/beer-update",
                         requestFields(
-                                fields.withPath("id").description("Id of Beer").ignored(),
-                                fields.withPath("createdDate").description("Date Created").ignored(),
-                                fields.withPath("lastUpdatedDate").description("Date Updated").ignored(),
+                                fields.withPath("id").description("Id of Beer").type(UUID.class),
+                                fields.withPath("createdDate").description("Date Created").type(OffsetDateTime.class),
+                                fields.withPath("lastUpdatedDate").description("Date Updated").type(OffsetDateTime.class),
                                 fields.withPath("beerName").description("Beer Name"),
                                 fields.withPath("beerStyle").description("Beer Style"),
                                 fields.withPath("upc").description("UPC of Beer").attributes()
